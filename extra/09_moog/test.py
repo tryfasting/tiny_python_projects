@@ -2,16 +2,22 @@
 """tests for moog.py"""
 
 import os
+import sys
 import random
 import re
 import string
+from itertools import chain
 from subprocess import getstatusoutput
+
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 from numpy import mean
-from itertools import chain
 
+# The script/program under test
 prg = './moog.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -43,7 +49,7 @@ def test_bad_seqtype():
     """die on bad seqtype"""
 
     bad = random_string()
-    rv, out = getstatusoutput(f'{prg} -t {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -t {bad}')
     assert rv != 0
     assert re.match('usage:', out, re.I)
     assert re.search(
@@ -56,7 +62,7 @@ def test_bad_pctgc():
     """die on bad pctgc"""
 
     bad = random.randint(1, 10)
-    rv, out = getstatusoutput(f'{prg} -p {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -p {bad}')
     assert rv != 0
     assert re.match('usage:', out, re.I)
     assert re.search(f'--pctgc "{float(bad)}" must be between 0 and 1', out)
@@ -71,7 +77,7 @@ def test_defaults():
         if os.path.isfile(out_file):
             os.remove(out_file)
 
-        rv, out = getstatusoutput(prg)
+        rv, out = getstatusoutput(f'{PYTHON} {prg}')
         assert rv == 0
         assert out == f'Done, wrote 10 DNA sequences to "{out_file}".'
         assert os.path.isfile(out_file)
@@ -144,4 +150,5 @@ def test_options():
 
     finally:
         if os.path.isfile(out_file):
+            os.remove(out_file)
             os.remove(out_file)

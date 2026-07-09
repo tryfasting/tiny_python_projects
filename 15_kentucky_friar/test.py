@@ -2,10 +2,15 @@
 """tests for friar.py"""
 
 import os
+import sys
 import re
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './friar.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -20,7 +25,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -31,7 +36,7 @@ def test_two_syllable_ing_words():
 
     tests = [("cooking", "cookin'"), ("Fishing", "Fishin'")]
     for given, expected in tests:
-        out = getoutput(f'{prg} {given}')
+        out = getoutput(f'{PYTHON} {prg} {given}')
         assert out.strip() == expected.strip()
 
 
@@ -41,7 +46,7 @@ def test_one_syllable_ing_words():
 
     tests = [("sing", "sing"), ("Fling", "Fling")]
     for given, expected in tests:
-        out = getoutput(f'{prg} {given}')
+        out = getoutput(f'{PYTHON} {prg} {given}')
         assert out.strip() == expected.strip()
 
 
@@ -51,7 +56,7 @@ def test_you_yall():
 
     tests = [("you", "y'all"), ("You", "Y'all")]
     for given, expected in tests:
-        out = getoutput(f'{prg} {given}')
+        out = getoutput(f'{PYTHON} {prg} {given}')
         assert out.strip() == expected.strip()
 
 
@@ -65,7 +70,7 @@ def run_file(file):
     assert os.path.isfile(expected_file)
     expected = open(expected_file).read()
 
-    out = getoutput(f'{prg} {file}')
+    out = getoutput(f'{PYTHON} {prg} {file}')
     assert out.strip() == expected.strip()
 
 

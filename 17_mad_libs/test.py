@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """tests for mad_lib.py"""
 
-import re
 import os
+import sys
 import random
+import re
 import string
 from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './mad.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 no_blanks = 'inputs/no_blanks.txt'
 fox = 'inputs/fox.txt'
 hlp = 'inputs/help.txt'
@@ -26,7 +31,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -36,7 +41,7 @@ def test_bad_file():
     """Test bad input file"""
 
     bad = random_string()
-    rv, out = getstatusoutput(f'{prg} {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {bad}')
     assert rv != 0
     assert re.search(f"No such file or directory: '{bad}'", out)
 
@@ -45,7 +50,7 @@ def test_bad_file():
 def test_no_blanks():
     """Test no blanks"""
 
-    rv, out = getstatusoutput(f'{prg} {no_blanks}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {no_blanks}')
     assert rv != 0
     assert out == f'"{no_blanks}" has no placeholders.'
 
@@ -55,7 +60,7 @@ def test_fox():
     """test fox"""
 
     args = f'{fox} -i surly car under bicycle'
-    rv, out = getstatusoutput(f'{prg} {args}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {args}')
     assert rv == 0
     assert out.strip() == 'The quick surly car jumps under the lazy bicycle.'
 
@@ -72,7 +77,7 @@ Arriba!
     """.strip()
 
     args = f'{hlp} -i Hey tacos Oi salsa Hola queso Arriba'
-    rv, out = getstatusoutput(f'{prg} {args}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {args}')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -100,7 +105,7 @@ What here shall hammer, our toil shall strive to mend.
 
     args = (f'{verona} --inputs cars Detroit oil pistons '
             '"stick shift" furious accelerate 42 foot hammer')
-    rv, out = getstatusoutput(f'{prg} {args}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {args}')
     assert rv == 0
     assert out.strip() == expected.strip()
 

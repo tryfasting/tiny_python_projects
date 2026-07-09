@@ -2,12 +2,17 @@
 """tests for howler.py"""
 
 import os
-import re
+import sys
 import random
+import re
 import string
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './howler.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -37,7 +42,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -46,7 +51,7 @@ def test_usage():
 def test_text_stdout():
     """Test STDIN/STDOUT"""
 
-    out = getoutput(f'{prg} "foo bar baz"')
+    out = getoutput(f'{PYTHON} {prg} "foo bar baz"')
     assert out.strip() == 'FOO BAR BAZ'
 
 
@@ -59,7 +64,7 @@ def test_text_outfile():
         os.remove(out_file)
 
     try:
-        out = getoutput(f'{prg} {out_flag()} {out_file} "foo bar baz"')
+        out = getoutput(f'{PYTHON} {prg} {out_flag()} {out_file} "foo bar baz"')
         assert out.strip() == ''
         assert os.path.isfile(out_file)
         text = open(out_file).read().rstrip()
@@ -81,7 +86,7 @@ def test_file():
 
             basename = os.path.basename(expected_file)
             in_file = os.path.join('../inputs', basename)
-            out = getoutput(f'{prg} {out_flag()} {out_file} {in_file}')
+            out = getoutput(f'{PYTHON} {prg} {out_flag()} {out_file} {in_file}')
             assert out.strip() == ''
             produced = open(out_file).read().rstrip()
             expected = open(os.path.join('test-outs',

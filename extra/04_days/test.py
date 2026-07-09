@@ -2,12 +2,14 @@
 """tests for days.py"""
 
 import os
-import random
-import re
-import string
+import sys
 from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './days.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -22,7 +24,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -31,7 +33,7 @@ def test_usage():
 def run_day(day, expected):
     """Run a day"""
 
-    rv, out = getstatusoutput(f'{prg} {day}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {day}')
     assert rv == 0
     assert out == expected
 
@@ -93,7 +95,7 @@ def test_lower():
             'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
             'sunday'
     ]:
-        rv, out = getstatusoutput(f'{prg} {day}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {day}')
         assert rv == 0
         assert out == f'Can\'t find "{day}"'
 

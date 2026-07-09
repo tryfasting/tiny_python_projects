@@ -2,10 +2,15 @@
 """tests for gematria.py"""
 
 import os
+import sys
 import re
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './gematria.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 spiders = '../inputs/spiders.txt'
 fox = '../inputs/fox.txt'
 sonnet = '../inputs/sonnet-29.txt'
@@ -23,7 +28,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -32,7 +37,7 @@ def test_usage():
 def test_text():
     """Text"""
 
-    out = getoutput(f'{prg} "foo bar baz"')
+    out = getoutput(f'{PYTHON} {prg} "foo bar baz"')
     assert out.strip() == '324 309 317'
 
 
@@ -40,7 +45,7 @@ def test_text():
 def test_fox():
     """File"""
 
-    out = getoutput(f'{prg} {fox}')
+    out = getoutput(f'{PYTHON} {prg} {fox}')
     assert out.strip() == '289 541 552 333 559 444 321 448 314'
 
 
@@ -48,7 +53,7 @@ def test_fox():
 def test_spiders():
     """File"""
 
-    out = getoutput(f'{prg} {spiders}')
+    out = getoutput(f'{PYTHON} {prg} {spiders}')
     assert out.strip() == '405 579 762\n73 421 548\n862'
 
 
@@ -56,7 +61,7 @@ def test_spiders():
 def test_sonnet():
     """File"""
 
-    out = getoutput(f'{prg} {sonnet}')
+    out = getoutput(f'{PYTHON} {prg} {sonnet}')
     expected = """
 631 107
 719 1132

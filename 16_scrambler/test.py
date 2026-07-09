@@ -2,10 +2,15 @@
 """tests for scrambler.py"""
 
 import os
+import sys
 import re
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './scrambler.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 fox = '../inputs/fox.txt'
 bustle = '../inputs/the-bustle.txt'
 spiders = '../inputs/spiders.txt'
@@ -23,7 +28,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -32,7 +37,7 @@ def test_usage():
 def test_text1():
     """Text"""
 
-    out = getoutput(f'{prg} foobar -s 1')
+    out = getoutput(f'{PYTHON} {prg} foobar -s 1')
     assert out.strip() == 'faobor'
 
 
@@ -42,7 +47,7 @@ def test_text2():
 
     text = 'The quick brown fox jumps over the lazy dog.'
     expected = 'The qicuk bworn fox jpmus over the lzay dog.'
-    out = getoutput(f'{prg} "{text}" -s 2')
+    out = getoutput(f'{PYTHON} {prg} "{text}" -s 2')
     assert out.strip() == expected
 
 
@@ -62,7 +67,7 @@ We slahl not want to use again
 Unitl eettnriy.
     """.strip()
 
-    out = getoutput(f'{prg} --seed 3 {bustle}')
+    out = getoutput(f'{PYTHON} {prg} --seed 3 {bustle}')
     assert out.strip() == expected.strip()
 
 
@@ -70,7 +75,7 @@ Unitl eettnriy.
 def test_file_fox():
     """File input"""
 
-    out = getoutput(f'{prg} --seed 4 {fox}')
+    out = getoutput(f'{PYTHON} {prg} --seed 4 {fox}')
     assert out.strip() == 'The qciuk bworn fox jpums oevr the lzay dog.'
 
 
@@ -78,6 +83,6 @@ def test_file_fox():
 def test_file_spiders():
     """File input"""
 
-    out = getoutput(f'{prg} --seed 9 {spiders}')
+    out = getoutput(f'{PYTHON} {prg} --seed 9 {spiders}')
     expected = "Do'nt wrory, sedrpis,\nI keep hsoue\ncalusaly."
     assert out.strip() == expected

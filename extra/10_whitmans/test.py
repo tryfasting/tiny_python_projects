@@ -2,17 +2,20 @@
 """tests for sampler.py"""
 
 import os
+import sys
 import random
 import re
 import string
-from subprocess import getstatusoutput
-from Bio import SeqIO
-from Bio.SeqUtils import GC
-from numpy import mean
-from itertools import chain
 from shutil import rmtree
+from subprocess import getstatusoutput
 
+from Bio import SeqIO
+
+# The script/program under test
 prg = './sampler.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 n1k = './n1k.fa'
 n10k = './n10k.fa'
 n100k = './n100k.fa'
@@ -49,7 +52,7 @@ def test_bad_file():
     """die on bad file"""
 
     bad = random_string()
-    rv, out = getstatusoutput(f'{prg} {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {bad}')
     assert rv != 0
     assert re.match('usage:', out, re.I)
     assert re.search(f"No such file or directory: '{bad}'", out)
@@ -60,7 +63,7 @@ def test_bad_pct():
     """die on bad pct"""
 
     bad = random.randint(1, 10)
-    rv, out = getstatusoutput(f'{prg} -p {bad} {n1k}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -p {bad} {n1k}')
     assert rv != 0
     assert re.match('usage:', out, re.I)
     assert re.search(f'--pct "{float(bad)}" must be between 0 and 1', out)
@@ -75,7 +78,7 @@ def test_defaults():
         if os.path.isdir(out_dir):
             rmtree(out_dir)
 
-        rv, out = getstatusoutput(f'{prg} -s 10 {n1k}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} -s 10 {n1k}')
         assert rv == 0
         expected = ('  1: n1k.fa\n'
                     'Wrote 108 sequences from 1 file to directory "out"')
@@ -131,4 +134,5 @@ def test_options():
         assert seqs_written == 27688
     finally:
         if os.path.isdir(out_dir):
+            rmtree(out_dir)
             rmtree(out_dir)

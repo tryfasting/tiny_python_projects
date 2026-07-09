@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """tests for translate.py"""
 
-from subprocess import getstatusoutput
-import os.path
+import os
+import sys
+import random
 import re
 import string
-import random
+from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './translate.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 dna = 'gaactacaccgttctcctggt'
 rna = 'UGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGAA'
 
@@ -40,7 +45,7 @@ def test_usage():
 def test_no_args():
     """die on no args"""
 
-    rv, out = getstatusoutput(prg)
+    rv, out = getstatusoutput(f'{PYTHON} {prg}')
     assert rv != 0
     assert re.match("usage", out, re.IGNORECASE)
 
@@ -112,7 +117,7 @@ def run(input_seq, codons, expected):
                              '-o ' + random_file) if flip == 1 else ('out.txt',
                                                                      '')
         print(f'{prg} -c {codons} {out_arg} {input_seq}')
-        rv, output = getstatusoutput(f'{prg} -c {codons} {out_arg} {input_seq}')
+        rv, output = getstatusoutput(f'{PYTHON} {prg} -c {codons} {out_arg} {input_seq}')
 
         assert rv == 0
         assert output.rstrip() == f'Output written to "{out_file}".'

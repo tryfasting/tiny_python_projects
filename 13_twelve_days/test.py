@@ -2,12 +2,17 @@
 """tests for twelve_days.py"""
 
 import os
+import sys
 import random
 import re
 import string
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './twelve_days.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 day_one = '\n'.join([
     'On the first day of Christmas,', 'My true love gave to me,',
     'A partridge in a pear tree.'
@@ -33,7 +38,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -43,7 +48,7 @@ def test_bad_num():
     """test bad_num"""
 
     for n in [random.choice(r) for r in (range(-10, -1), range(13, 20))]:
-        rv, out = getstatusoutput(f'{prg} -n {n}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} -n {n}')
         assert rv != 0
         assert re.search(f'--num "{n}" must be between 1 and 12', out)
 
@@ -52,7 +57,7 @@ def test_bad_num():
 def test_one():
     """test one"""
 
-    out = getoutput(f'{prg} -n 1')
+    out = getoutput(f'{PYTHON} {prg} -n 1')
     assert out.rstrip() == day_one
 
 
@@ -60,7 +65,7 @@ def test_one():
 def test_two():
     """test two"""
 
-    out = getoutput(f'{prg} --num 2')
+    out = getoutput(f'{PYTHON} {prg} --num 2')
     assert out == '\n\n'.join([day_one, day_two])
 
 
@@ -68,7 +73,7 @@ def test_two():
 def test_all_stdout():
     """test"""
 
-    out = getoutput(f'{prg}').splitlines()
+    out = getoutput(f'{PYTHON} {prg}').splitlines()
     assert len(out) == 113
     assert out[0] == 'On the first day of Christmas,'
     assert out[-1] == 'And a partridge in a pear tree.'

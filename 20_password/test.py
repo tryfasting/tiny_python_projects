@@ -2,12 +2,17 @@
 """tests for password.py"""
 
 import os
+import sys
 import random
 import re
 import string
 from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './password.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 words = '../inputs/words.txt'
 
 
@@ -24,7 +29,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -34,7 +39,7 @@ def test_bad_file():
     """Dies on bad file"""
 
     bad = random_string()
-    rv, out = getstatusoutput(f'{prg} {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {bad}')
     assert rv != 0
     assert re.search(f"No such file or directory: '{bad}'", out)
 
@@ -45,7 +50,7 @@ def test_bad_num():
 
     bad = random_string()
     flag = '-n' if random.choice([0, 1]) else '--num'
-    rv, out = getstatusoutput(f'{prg} {flag} {bad} {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {flag} {bad} {words}')
     assert rv != 0
     assert re.search(f"invalid int value: '{bad}'", out)
 
@@ -56,7 +61,7 @@ def test_bad_num_words():
 
     bad = random_string()
     flag = '-w' if random.choice([0, 1]) else '--num_words'
-    rv, out = getstatusoutput(f'{prg} {flag} {bad} {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {flag} {bad} {words}')
     assert rv != 0
     assert re.search(f"invalid int value: '{bad}'", out)
 
@@ -67,7 +72,7 @@ def test_bad_min_word_len():
 
     bad = random_string()
     flag = '-m' if random.choice([0, 1]) else '--min_word_len'
-    rv, out = getstatusoutput(f'{prg} {flag} {bad} {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {flag} {bad} {words}')
     assert rv != 0
     assert re.search(f"invalid int value: '{bad}'", out)
 
@@ -78,7 +83,7 @@ def test_bad_max_word_len():
 
     bad = random_string()
     flag = '-m' if random.choice([0, 1]) else '--max_word_len'
-    rv, out = getstatusoutput(f'{prg} {flag} {bad} {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {flag} {bad} {words}')
     assert rv != 0
     assert re.search(f"invalid int value: '{bad}'", out)
 
@@ -89,7 +94,7 @@ def test_bad_seed():
 
     bad = random_string()
     flag = '-s' if random.choice([0, 1]) else '--seed'
-    rv, out = getstatusoutput(f'{prg} {flag} {bad} {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {flag} {bad} {words}')
     assert rv != 0
     assert re.search(f"invalid int value: '{bad}'", out)
 
@@ -98,7 +103,7 @@ def test_bad_seed():
 def test_defaults():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 {words}')
     assert rv == 0
     assert out.strip() == '\n'.join([
         'DuniteBoonLociDefat', 'WegaTitmalUnplatSatire', 'IdeanClipsVitiArriet'
@@ -109,7 +114,7 @@ def test_defaults():
 def test_num():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 -n 1 {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 -n 1 {words}')
     assert rv == 0
     assert out.strip() == 'DuniteBoonLociDefat'
 
@@ -118,7 +123,7 @@ def test_num():
 def test_num_words():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 -w 2 {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 -w 2 {words}')
     assert rv == 0
     assert out.strip() == '\n'.join(['DuniteBoon', 'LociDefat', 'WegaTitmal'])
 
@@ -127,7 +132,7 @@ def test_num_words():
 def test_min_word_len():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 -m 5 {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 -m 5 {words}')
     assert rv == 0
     assert out.strip() == '\n'.join([
         'CarneyRapperWabenoUndine', 'BabaiFarerBugleOnlepy',
@@ -139,7 +144,7 @@ def test_min_word_len():
 def test_max_word_len():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 -x 10 {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 -x 10 {words}')
     assert rv == 0
     assert out.strip() == '\n'.join([
         'DicemanYardwandBoeberaKismetic', 'CubiculumTilsitSnowcapSuer',
@@ -151,7 +156,7 @@ def test_max_word_len():
 def test_l33t():
     """Test"""
 
-    rv, out = getstatusoutput(f'{prg} -s 1 -l {words}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -s 1 -l {words}')
     assert rv == 0
     assert out.strip() == '\n'.join([
         'DUn1Teb0onloCiDef4T/', 'Weg4TiTm@LuNPl4T54+1r3_',

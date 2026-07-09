@@ -2,12 +2,15 @@
 """tests for order.py"""
 
 import os
+import sys
 import random
-import re
-import string
 from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './order.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -22,7 +25,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -31,7 +34,7 @@ def test_usage():
 def test_nothing():
     """nothing"""
 
-    rv, out = getstatusoutput(f'{prg}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg}')
     assert rv == 0
     assert out.rstrip() == 'You have failed me for the last time, Commander.'
 
@@ -40,7 +43,7 @@ def test_nothing():
 def test_one_element():
     """one element"""
 
-    rv, out = getstatusoutput(f'{prg} foo')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} foo')
     assert rv == 0
     assert out.rstrip() == '  1: foo'
 
@@ -49,7 +52,7 @@ def test_one_element():
 def test_two_elements():
     """two elements"""
 
-    rv, out = getstatusoutput(f'{prg} foo bar')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} foo bar')
     assert rv == 0
     assert out.rstrip() == '  1: bar\n  2: foo'
 
@@ -59,7 +62,7 @@ def test_two_elements_reversed():
     """two elements reversed"""
 
     rev = '-r' if random.choice([0, 1]) else '--reverse'
-    rv, out = getstatusoutput(f'{prg} foo bar {rev}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} foo bar {rev}')
     assert rv == 0
     assert out.rstrip() == '  1: foo\n  2: bar'
 
@@ -69,7 +72,7 @@ def test_more():
     """MOAR"""
 
     items = 'one two three four five six seven eight nine ten zero'
-    rv, out = getstatusoutput(f'{prg} {items}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {items}')
     assert rv == 0
     expected = '\n'.join([
         '  1: eight', '  2: five', '  3: four', '  4: nine', '  5: one',
@@ -85,7 +88,7 @@ def test_more_reverse():
 
     items = 'one two three four five six seven eight nine ten zero'
     rev = '-r' if random.choice([0, 1]) else '--reverse'
-    rv, out = getstatusoutput(f'{prg} {items} {rev}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {items} {rev}')
     assert rv == 0
     expected = '\n'.join([
         '  1: zero', '  2: two', '  3: three', '  4: ten', '  5: six',

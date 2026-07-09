@@ -2,12 +2,15 @@
 """tests for dna.py"""
 
 import os
+import sys
 import random
-import re
-import string
-from subprocess import getstatusoutput, getoutput
+from subprocess import getoutput, getstatusoutput
 
+# The script/program under test
 prg = './dna.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 
 
 # --------------------------------------------------
@@ -22,7 +25,7 @@ def test_no_arg_and_usage():
     """usage"""
 
     for flag in ['', '-h', '--help']:
-        out = getoutput(f'{prg} {flag}')
+        out = getoutput(f'{PYTHON} {prg} {flag}')
         assert out.lower().startswith('usage')
 
 
@@ -32,7 +35,7 @@ def run_single(base):
 
     num = random.randint(1, 10)
     given = base * num
-    rv, out = getstatusoutput(f'{prg} {given}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {given}')
     assert rv == 0
     cmp = base.upper()
     expected = f'{num} 0 0 0' if cmp == 'A' else \
@@ -104,6 +107,6 @@ def test_rosalind_example():
     dna = ('AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATT'
            'AAAAAAAGAGTGTCTGATAGCAGC')
 
-    rv, out = getstatusoutput(f'{prg} {dna}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {dna}')
     assert rv == 0
     assert out == '20 12 17 21'

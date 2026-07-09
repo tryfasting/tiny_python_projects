@@ -2,12 +2,17 @@
 """tests for wod.py"""
 
 import os
+import sys
 import random
 import re
 import string
 from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './wod.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 input1 = 'inputs/exercises.csv'
 input2 = 'inputs/silly-exercises.csv'
 
@@ -24,7 +29,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput(f'{prg} {flag}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -34,7 +39,7 @@ def test_bad_num():
     """Dies on bad --num"""
 
     bad = random.choice(range(-10, 0))
-    rv, out = getstatusoutput(f'{prg} -n {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -n {bad}')
     assert rv != 0
     assert re.search(f'--num "{bad}" must be greater than 0', out)
 
@@ -44,7 +49,7 @@ def test_bad_file():
     """Dies on bad file"""
 
     bad = random_string()
-    rv, out = getstatusoutput(f'{prg} -f {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} -f {bad}')
     assert rv != 0
     assert re.search(f"No such file or directory: '{bad}'", out)
 
@@ -63,7 +68,7 @@ Burpees         35
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
-    rv, out = getstatusoutput(f'{prg} {seed_flag} 1')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {seed_flag} 1')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -83,7 +88,7 @@ Burpees         17
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     easy_flag = '-e' if random.choice([0, 1]) else '--easy'
-    rv, out = getstatusoutput(f'{prg} {easy_flag} {seed_flag} 1')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {easy_flag} {seed_flag} 1')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -127,7 +132,7 @@ Squatting Chinups      35
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     num_flag = '-n' if random.choice([0, 1]) else '--num'
-    rv, out = getstatusoutput(f'{prg} {num_flag} 3 {seed_flag} 4 -f {input2}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {num_flag} 3 {seed_flag} 4 -f {input2}')
     assert rv == 0
     assert out.strip() == expected.strip()
 

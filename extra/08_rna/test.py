@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """tests for transcribe.py"""
 
-from subprocess import getstatusoutput
-import os.path
+import os
+import sys
+import random
 import re
 import string
-import random
 from shutil import rmtree
+from subprocess import getstatusoutput
 
+# The script/program under test
 prg = './transcribe.py'
+
+# Path to the Python interpreter in the current virtual environment
+PYTHON = sys.executable
 input1 = './inputs/input1.txt'
 input2 = './inputs/input2.txt'
 
@@ -41,7 +46,7 @@ def test_usage():
 def test_no_args():
     """die on no args"""
 
-    rv, out = getstatusoutput(prg)
+    rv, out = getstatusoutput(f'{PYTHON} {prg}')
     assert rv != 0
     assert re.match("usage", out, re.IGNORECASE)
 
@@ -51,7 +56,7 @@ def test_bad_file():
     """die on missing input"""
 
     bad = random_filename()
-    rv, out = getstatusoutput(f'{prg} {bad}')
+    rv, out = getstatusoutput(f'{PYTHON} {prg} {bad}')
     assert rv != 0
     assert re.match('usage:', out, re.I)
     assert re.search(f"No such file or directory: '{bad}'", out)
@@ -66,7 +71,7 @@ def test_good_input1():
         if os.path.isdir(out_dir):
             rmtree(out_dir)
 
-        rv, out = getstatusoutput(f'{prg} {input1}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} {input1}')
         assert rv == 0
         assert out == 'Done, wrote 1 sequence in 1 file to directory "out".'
         assert os.path.isdir(out_dir)
@@ -87,7 +92,7 @@ def test_good_input2():
         if os.path.isdir(out_dir):
             rmtree(out_dir)
 
-        rv, out = getstatusoutput(f'{prg} -o {out_dir} {input2}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} -o {out_dir} {input2}')
         assert rv == 0
         assert out == f'Done, wrote 2 sequences in 1 file to directory "{out_dir}".'
         assert os.path.isdir(out_dir)
@@ -108,7 +113,7 @@ def test_good_multiple_inputs():
         if os.path.isdir(out_dir):
             rmtree(out_dir)
 
-        rv, out = getstatusoutput(f'{prg} --outdir {out_dir} {input1} {input2}')
+        rv, out = getstatusoutput(f'{PYTHON} {prg} --outdir {out_dir} {input1} {input2}')
         assert rv == 0
         assert out == f'Done, wrote 3 sequences in 2 files to directory "{out_dir}".'
         assert os.path.isdir(out_dir)

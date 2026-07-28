@@ -12,7 +12,6 @@ import subprocess
 import sys
 from datetime import date
 from pathlib import Path
-
 from typing import NamedTuple
 
 
@@ -63,7 +62,33 @@ def get_args() -> Args:
 
     args = parser.parse_args()
 
-    args.program = args.program.strip().replace('-', '_')
+    path_obj = Path(args.program.strip()).absolute()
+    parent_dir = path_obj.parent
+
+    if '-' in parent_dir.name:
+        current_name = parent_dir.name
+        converted_name = current_name.replace('-', '_')
+
+        print(f"\n📢 Notice: Parent directory contains '-' ({current_name})")
+        print(f"    [1] Keep as is ───────────────> {current_name}/ (Recommended for apps)")
+        print(f"    [2] Create a new folder ──────> {converted_name}/ (Keep original folder)")
+        print(f"    [3] Rename existing folder ───> {converted_name}/ (⚠️ Warning: Modifies disk)")
+        
+        choice = input("\n👉 Select an option (1, 2, or 3) [default: 1]: ").strip()
+        
+        if choice == '3':
+            new_parent = parent_dir.with_name(converted_name)
+            parent_dir.rename(new_parent)
+            parent_dir = new_parent
+        elif choice == '2':
+            parent_dir = parent_dir.with_name(converted_name)
+        else:
+            pass
+
+    parent_dir.mkdir(parents=True, exist_ok=True)
+    
+    safe_filename = path_obj.name.replace('-', '_')
+    args.program = str(parent_dir / safe_filename)
 
     if not args.program:
         parser.error(f'Not a usable filename "{args.program}"')

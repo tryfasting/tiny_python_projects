@@ -201,10 +201,11 @@ if __name__ == '__main__':
 def get_defaults():
     """Get defaults from ~/.new.py"""
 
-    rc = os.path.join(str(Path.home()), '.new.py')
+    script_dir = Path(__file__).parent.absolute()
+    rc = os.path.join(str(script_dir), 'new.env')
     defaults = {}
     if os.path.isfile(rc):
-        for line in open(rc):
+        for line in open(rc, encoding='utf-8'):
             match = re.match('([^=]+)=([^=]+)', line)
             if match:
                 key, val = map(str.strip, match.groups())

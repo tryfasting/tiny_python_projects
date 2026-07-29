@@ -1,3 +1,11 @@
+# My Custom Version
+This is a fork of the original repository by Ken, featuring several improvements:
+
+- **uv Integration**: Faster and modern Python package management using `uv`.
+- **Cross-Platform Patch**: Updated test scripts to fully support both Windows and macOS.
+- **Custom Path Handling (new.py)**: Changed how `new.py` processes parent folder names containing `-` to keep the original directory layout. 
+- **Local Config (new.py)**: Modified `new.py` to read default argument values (name, email, purpose) from `new.env` instead of `.new.py`. Put the `new.env` file in the same `\bin` directory.
+  
 # Introduction
 
 This is the code repository for the Manning Publications book, _Tiny Python Projects_, by Ken Youens-Clark:
